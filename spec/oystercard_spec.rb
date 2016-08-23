@@ -3,6 +3,8 @@ require 'oystercard'
 describe Oystercard do
     subject(:oystercard) {described_class.new}
 
+    let(:entry_station) {double :entry_station}
+
   describe '#card' do
     it 'has a balance of zero' do
       expect(oystercard.balance).to eq 0
@@ -40,12 +42,24 @@ describe Oystercard do
     describe '#touch_in' do
       it 'can touch in' do
         oystercard.top_up(10) #need stub
-        oystercard.touch_in
+        oystercard.touch_in(entry_station)
         expect(oystercard).to be_in_journey
       end
+
+      it 'responds to 1 argument' do
+        oystercard.top_up(10)
+        expect(oystercard).to respond_to(:touch_in).with(1).argument
+      end
+
+      it 'remembers the entry_station' do
+        oystercard.top_up(10)
+        oystercard.touch_in(entry_station)
+        expect(oystercard.entry_station).to eq entry_station
+      end
+
       context 'When balance is less than £1' do
         it 'raises an error' do
-          expect { oystercard.touch_in }.to raise_error 'not enough credit'
+          expect { oystercard.touch_in(entry_station) }.to raise_error 'not enough credit'
         end
       end
     end
@@ -53,15 +67,22 @@ describe Oystercard do
    describe '#touch_out' do
      it 'can touch out' do
        oystercard.top_up(10) #need stub
-       oystercard.touch_in
+       oystercard.touch_in(entry_station)
        oystercard.touch_out
        expect(oystercard).not_to be_in_journey
      end
 
      it "reduces balance by MINIMUM_FARE when touch_out is called" do
        oystercard.top_up(10)
-       oystercard.touch_in
+       oystercard.touch_in(entry_station)
        expect{oystercard.touch_out}.to change{oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
+     end
+
+     it 'sets entry_station to nil' do
+       oystercard.top_up(10)
+       oystercard.touch_in(entry_station)
+       oystercard.touch_out
+       expect(oystercard.entry_station).to eq nil
      end
    end
  end
