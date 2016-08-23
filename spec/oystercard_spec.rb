@@ -50,23 +50,18 @@ describe Oystercard do
       end
     end
 
-    describe '#deduct' do
-     it 'respond to deduct with one argument' do
-       expect(oystercard).to respond_to(:deduct).with(1).argument
-     end
-     it 'can decrease the balance' do
-       expect{ oystercard.deduct 10 }.to change{oystercard.balance}.by -10
-     end
-   end
-
-
-
    describe '#touch_out' do
      it 'can touch out' do
        oystercard.top_up(10) #need stub
        oystercard.touch_in
        oystercard.touch_out
        expect(oystercard).not_to be_in_journey
+     end
+
+     it "reduces balance by MINIMUM_FARE when touch_out is called" do
+       oystercard.top_up(10)
+       oystercard.touch_in
+       expect{oystercard.touch_out}.to change{oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
      end
    end
  end
