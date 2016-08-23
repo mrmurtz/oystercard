@@ -4,11 +4,20 @@ describe Oystercard do
     subject(:oystercard) {described_class.new}
 
     let(:entry_station) {double :entry_station}
+    let(:exit_station) {double :exit_station}
+    let(:journey) {{:entry_station => entry_station, :exit_station => exit_station}}
 
-  describe '#card' do
-    it 'has a balance of zero' do
+
+  describe 'initialize' do
+    it 'card has a balance of zero' do
       expect(oystercard.balance).to eq 0
     end
+
+    it "is able to store journey history" do
+      expect(oystercard.journeys).to eq []
+    end
+
+
   end
 
   describe '#in_journey?' do
@@ -68,21 +77,29 @@ describe Oystercard do
      it 'can touch out' do
        oystercard.top_up(10) #need stub
        oystercard.touch_in(entry_station)
-       oystercard.touch_out
+       oystercard.touch_out(exit_station)
        expect(oystercard).not_to be_in_journey
      end
 
      it "reduces balance by MINIMUM_FARE when touch_out is called" do
        oystercard.top_up(10)
        oystercard.touch_in(entry_station)
-       expect{oystercard.touch_out}.to change{oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
+       expect{oystercard.touch_out(exit_station)}.to change{oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
      end
 
-     it 'sets entry_station to nil' do
+     it "remembers an exit station" do
        oystercard.top_up(10)
        oystercard.touch_in(entry_station)
-       oystercard.touch_out
-       expect(oystercard.entry_station).to eq nil
+       oystercard.touch_out(exit_station)
+       expect(oystercard.exit_station).to eq exit_station
+     end
+
+
+     it "stores an entry and exit station to the journey history on the card" do
+       oystercard.top_up(10)
+       oystercard.touch_in(entry_station)
+       oystercard.touch_out(exit_station)
+       expect(oystercard.journeys).to include journey
      end
    end
  end
