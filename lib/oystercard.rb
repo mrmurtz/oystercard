@@ -25,6 +25,7 @@ MINIMUM_FARE = 1
     fail 'not enough credit' if empty?
     @in_journey = true
     @entry_station = entry_station
+    #journey = Journey.new(entry_station, exit_station = nil)
   end
 
   def touch_out(exit_station)
@@ -47,4 +48,5 @@ MINIMUM_FARE = 1
   def empty?
     @balance < MINIMUM_FARE
   end
+  
 end
