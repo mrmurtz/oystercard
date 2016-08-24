@@ -12,10 +12,6 @@ describe Oystercard do
     it 'card has a balance of zero' do
       expect(oystercard.balance).to eq 0
     end
-
-    it "is able to store journey history" do
-      expect(oystercard.journeys).to eq []
-    end
   end
 
 
@@ -54,12 +50,6 @@ describe Oystercard do
     end
 
    describe '#touch_out' do
-     it "stores an entry and exit station to the journey history on the card" do
-       subject.top_up(10)
-       subject.touch_in(entry_station)
-       subject.touch_out(exit_station)
-       expect(subject.journeys).to include ({:entry_station => entry_station, :exit_station =>exit_station})
-     end
 
      it "charges the min fare" do
        subject.top_up(10)
