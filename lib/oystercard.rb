@@ -18,7 +18,7 @@ MINIMUM_FARE = 1
   end
 
   def in_journey?
-    !!@in_journey
+    @in_journey
   end
 
   def touch_in(entry_station)
@@ -48,5 +48,5 @@ MINIMUM_FARE = 1
   def empty?
     @balance < MINIMUM_FARE
   end
-  
+
 end
