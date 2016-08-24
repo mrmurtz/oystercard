@@ -21,37 +21,36 @@ BALANCE = 0
 
   def touch_in(entry_station)
     fail 'not enough credit' if empty?
-    # if current journey exists charge PENALTY_FARE
-    # store that journey in journey history
-    # and then clear current journey
-
-    @current_journey = Journey.new
+    if current_journey != nil
+      pen_for_not_touching_out
+    end
+    new_journey
     current_journey.start(entry_station)
     journeys << {entry_station: current_journey.entry_station, exit_station: nil}
-    # instantiate journey instance
-    # start the journey and pass the station in
-    # store current journey (for referencing later)
   end
 
   def touch_out(exit_station)
-    # create new journey (if one doesn;t exist)
-    # finish that journey
-    # calc PENALTY_FARE
-    # store it in journey history
-    # clear that current journey
-
+    if current_journey == nil
+      new_journey
+      journeys << {entry_station: nil, exit_station: exit_station}
+    end
     current_journey.finish(exit_station)
-    deduct(current_journey.fare)
+    deduct(current_journey.fare) #
     journeys[-1][:exit_station] = exit_station
-    @current_journey = nil
-    # grab current journey
-    # call finish on it
-    # calc fare
-    # store in journey history
-    # clear current journey
+    @current_journey = nil #
   end
 
   private
+
+  def pen_for_not_touching_out
+    deduct(current_journey.fare)
+    journeys << {entry_station: current_journey.entry_station, exit_station: nil}
+    @current_journey = nil
+  end
+
+  def new_journey
+    @current_journey = Journey.new
+  end
 
   def full?(amount)
     @balance + amount > LIMIT

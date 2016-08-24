@@ -37,18 +37,23 @@ describe Oystercard do
   end
 
   context 'when travelling' do
-
     describe '#touch_in' do
-
       context 'When balance is less than £1' do
         it 'raises an error' do
           expect { oystercard.touch_in(entry_station) }.to raise_error 'not enough credit'
         end
       end
+
+      context "touching in when not touched out" do
+        it "charges a pen fare" do
+          subject.top_up(10)
+          subject.touch_in(entry_station)
+          expect{subject.touch_in(entry_station)}.to change{subject.balance}.by(-6)
+        end
+      end
     end
 
    describe '#touch_out' do
-
      it "stores an entry and exit station to the journey history on the card" do
        oystercard.top_up(10)
        oystercard.touch_in(entry_station)
@@ -62,7 +67,10 @@ describe Oystercard do
        expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-1)
      end
 
-
+     it "charges a penalty fare when touching out if there is no entry station" do
+       subject.top_up(10)
+       expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-6)
+     end
    end
  end
 end
