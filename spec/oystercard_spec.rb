@@ -55,10 +55,10 @@ describe Oystercard do
 
    describe '#touch_out' do
      it "stores an entry and exit station to the journey history on the card" do
-       oystercard.top_up(10)
-       oystercard.touch_in(entry_station)
-       oystercard.touch_out(exit_station)
-       expect(oystercard.journeys).to include ({:entry_station => entry_station, :exit_station =>exit_station})
+       subject.top_up(10)
+       subject.touch_in(entry_station)
+       subject.touch_out(exit_station)
+       expect(subject.journeys).to include ({:entry_station => entry_station, :exit_station =>exit_station})
      end
 
      it "charges the min fare" do
